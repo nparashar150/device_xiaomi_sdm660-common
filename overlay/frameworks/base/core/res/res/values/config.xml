@@ -839,12 +839,6 @@
         provisioning, availability etc -->
    <bool name="config_carrier_wfc_ims_available">true</bool>
 
-   <!-- ImsService package name to bind to by default, if config_dynamic_bind_ims is true -->
-   <string name="config_ims_package">org.codeaurora.ims</string>
-
-   <!-- Flag specifying whether or not IMS will use the ImsResolver dynamically -->
-   <bool name="config_dynamic_bind_ims">true</bool>
-
     <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveBatteryLed">true</bool>
 
@@ -895,13 +889,11 @@
       <item>"/system/framework/framework.jar"</item>
       <item>"/system/framework/oat/arm64/services.odex"</item>
       <item>"/system/framework/services.jar"</item>
-      <item>"/system/framework/arm64/boot.oat"</item>
-      <item>"/system/framework/arm64/boot-core-libart.oat"</item>
-      <item>"/apex/com.android.runtime/javalib/core-oj.jar"</item>
-      <item>"/apex/com.android.runtime/javalib/core-libart.jar"</item>
+      <item>"/apex/com.android.art/javalib/core-oj.jar"</item>
+      <item>"/apex/com.android.art/javalib/core-libart.jar"</item>
       <item>"/apex/com.android.media/javalib/updatable-media.jar"</item>
-      <item>"/product/priv-app/SystemUI/SystemUI.apk"</item>
-      <item>"/product/priv-app/SystemUI/oat/arm64/SystemUI.odex"</item>
+      <item>"/system_ext/priv-app/SystemUI/SystemUI.apk"</item>
+      <item>"/system_ext/priv-app/SystemUI/oat/arm64/SystemUI.odex"</item>
       <item>/system/lib64/libRScpp.so</item>
       <item>/system/lib64/libRS.so</item>
       <item>/system/lib64/libRS_internal.so</item>
@@ -912,14 +904,12 @@
       <item>"/system/lib64/libsurfaceflinger.so"</item>
    </string-array>
 
-    <!-- List of files pinned by the Pinner Service with the apex boot image b/119800099 -->
-    <string-array translatable="false" name="config_apexBootImagePinnerServiceFiles">
+    <!-- List of files pinned by the Pinner Service with the JIT Zygote boot image -->
+    <string-array translatable="false" name="config_jitzygoteBootImagePinnerServiceFiles">
       <item>"/system/framework/framework.jar"</item>
       <item>"/system/framework/services.jar"</item>
-      <item>"/system/framework/arm64/apex.oat"</item>
-      <item>"/system/framework/arm64/apex-core-libart.oat"</item>
-      <item>"/apex/com.android.runtime/javalib/core-oj.jar"</item>
-      <item>"/apex/com.android.runtime/javalib/core-libart.jar"</item>
+      <item>"/apex/com.android.art/javalib/core-oj.jar"</item>
+      <item>"/apex/com.android.art/javalib/core-libart.jar"</item>
       <item>"/apex/com.android.media/javalib/updatable-media.jar"</item>
       <item>"/system/priv-app/SystemUI/SystemUI.apk"</item>
       <item>"/system/lib64/libsurfaceflinger.so"</item>
@@ -981,6 +971,12 @@
         <item>"9,1"</item>
     </string-array>
 
+    <!-- List of regexpressions describing the interface (if any) that represent tetherable
+         Wifi P2P interfaces.  If the device doesn't want to support tethering over Wifi P2p this
+         should be empty.  An example would be "p2p-p2p.*" -->
+    <string-array translatable="false" name="config_tether_wifi_p2p_regexs">
+        <item>"p2p\\d"</item>
+    </string-array>
 
     <!-- Configure mobile tcp buffer sizes in the form:
          rat-name:rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max
@@ -1030,66 +1026,6 @@
     <string name="config_SmartChargingSupspendValue" translatable="false">1</string>
     <string name="config_SmartChargingResumeValue" translatable="false">0</string>
 
-    <!-- List of regexpressions describing the interface (if any) that represent tetherable
-         USB interfaces.  If the device doesn't want to support tething over USB this should
-         be empty.  An example would be "usb.*" -->
-    <string-array translatable="false" name="config_tether_usb_regexs">
-        <item>"usb\\d"</item>
-        <item>"rndis\\d"</item>
-    </string-array>
-
-    <!-- List of regexpressions describing the interface (if any) that represent tetherable
-         Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
-         should be empty.  An example would be "softap.*" -->
-    <string-array translatable="false" name="config_tether_wifi_regexs">
-        <item>"wlan0"</item>
-        <item>"softap0"</item>
-    </string-array>
-
-    <!-- List of regexpressions describing the interface (if any) that represent tetherable
-         bluetooth interfaces.  If the device doesn't want to support tethering over bluetooth this
-         should be empty. -->
-    <string-array translatable="false" name="config_tether_bluetooth_regexs">
-        <item>"bt-pan"</item>
-    </string-array>
-
-    <!-- When true, the tethering upstream network follows the current default
-         Internet network (except when the current default network is mobile,
-         in which case a DUN network will be used if required). -->
-    <bool translatable="false" name="config_tether_upstream_automatic">true</bool>
-
-    <!-- Dhcp range (min, max) to use for tethering purposes -->
-    <!-- USB is  192.168.42.1 and 255.255.255.0
-         Wifi is 192.168.43.1 and 255.255.255.0
-         BT is limited to max default of 5 connections. 192.168.44.1 to 192.168.48.1
-         with 255.255.255.0
-         P2P is 192.168.49.1 and 255.255.255.0
-         Wigig is 192.168.50.1 and 255.255.255.0
-         Wigig P2P is 192.168.51.1 and 255.255.255.0
-    -->
-    <string-array translatable="false" name="config_tether_dhcp_range">
-        <item>192.168.42.2</item>
-        <item>192.168.42.254</item>
-        <item>192.168.43.2</item>
-        <item>192.168.43.254</item>
-        <item>192.168.44.2</item>
-        <item>192.168.44.254</item>
-        <item>192.168.45.2</item>
-        <item>192.168.45.254</item>
-        <item>192.168.46.2</item>
-        <item>192.168.46.254</item>
-        <item>192.168.47.2</item>
-        <item>192.168.47.254</item>
-        <item>192.168.48.2</item>
-        <item>192.168.48.254</item>
-        <item>192.168.49.2</item>
-        <item>192.168.49.254</item>
-        <item>192.168.50.2</item>
-        <item>192.168.50.254</item>
-        <item>192.168.51.2</item>
-        <item>192.168.51.254</item>
-    </string-array>
-
     <!-- Enables or disables fading edges when marquee is enabled in TextView.
          Off by default, since the framebuffer readback used to implement the
          fading edges is prohibitively expensive on most GPUs. -->
@@ -1119,18 +1055,12 @@
      available on some devices. -->
     <bool name="config_enableHapticTextHandle">true</bool>
 
-    <!-- Boolean indicating whether the wifi chipset has background scan support -->
-    <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
-
-    <!-- Wifi driver supports batched scan -->
-    <bool translatable="false" name="config_wifi_batched_scan_supported">true</bool>
-
     <!-- Configure wifi tcp buffersizes in the form:
          rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max -->
     <string name="config_wifi_tcp_buffers" translatable="false">524288,2097152,8388608,262144,524288,4194304</string>
 
-    <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
-    <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
+    <!-- Boolean indicating whether the wifi chipset has 5GHz frequency band support -->
+    <bool translatable="false" name="config_wifi5ghzSupport">true</bool>
 
     <!-- list of interface names for SoftAp in Dual mode. -->
     <string-array translatable="false" name="config_wifi_dual_sap_interfaces">
@@ -1138,17 +1068,8 @@
         <item>"softap2"</item>
     </string-array>
 
-    <!-- True if the firmware supports connected MAC randomization -->
-    <bool name="config_wifi_connected_mac_randomization_supported">true</bool>
-
     <!-- True if the firmware supports Wi-Fi link probing -->
     <bool name="config_wifi_link_probing_supported">true</bool>
-
-    <!-- Enable ACS (auto channel selection) for Wifi hotspot (SAP) -->
-    <bool translatable="false" name="config_wifi_softap_acs_supported">false</bool>
-
-    <!-- Enable 802.11ac for Wifi hotspot (SAP) -->
-    <bool translatable="false" name="config_wifi_softap_ieee80211ac_supported">true</bool>
 
     <!-- Whether WiFi display is supported by this device.
          There are many prerequisites for this feature to work correctly.
@@ -1208,7 +1129,14 @@
 
     <!-- Flag indicating whether the surface flinger has limited alpha compositing functionality in hardware. If set, the window manager will disable alpha trasformation in animations where not strictly needed. -->
     <bool name="config_sf_limitedAlpha">true</bool>
-     
-     <!-- Pocket Lock -->
-      <string name="config_pocketBridgeSysfsInpocket">/sys/kernel/pocket_judge/inpocket</string>
+
+    <!-- List of biometric sensors on the device, in decreasing strength. Consumed by AuthService
+         when registering authenticators with BiometricService. Format must be ID:Modality:Strength,
+         where: IDs are unique per device, Modality as defined in BiometricAuthenticator.java,
+         and Strength as defined in Authenticators.java -->
+    <string-array name="config_biometric_sensors" translatable="false">
+        <!-- ID0:Fingerprint:Strong -->
+        <item>0:2:15</item>
+    </string-array>
+
 </resources>
