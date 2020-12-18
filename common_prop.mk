@@ -1,5 +1,11 @@
 #Build FP to be picked by both system and vendor
-BUILD_FINGERPRINT := "google/coral/coral:10/QQ3A.200805.001/6578210:user/release-keys"
+BUILD_FINGERPRINT := "xiaomi/wayne/wayne:8.1.0/OPM1.171019.011/V9.5.11.0.ODCCNFA:user/release-keys"
+
+# Apex
+ifeq ($(ENABLE_APEX), true)
+PRODUCT_PRODUCT_PROPERTIES += \
+     ro.apex.updatable=true
+endif
 
 # ART
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -21,9 +27,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     audio.sys.offload.pstimeout.secs=3 \
     persist.audio.in_mmap_delay_micros=100 \
     persist.audio.out_mmap_delay_micros=150 \
-    persist.dirac.acs.controller=qem \
-    persist.dirac.acs.ignore_error=1 \
-    persist.dirac.acs.storeSettings=1 \
     persist.vendor.audio.fluence.speaker=true \
     persist.vendor.audio.fluence.voicecall=true \
     persist.vendor.audio.fluence.voicerec=false \
@@ -31,7 +34,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.audio.hw.binder.size_kbyte=1024 \
     persist.vendor.audio.ras.enabled=false \
     ro.af.client_heap_size_kbyte=7168 \
-    ro.audio.soundfx.dirac=true \
     ro.config.vc_call_vol_steps=7 \
     ro.config.media_vol_steps=25 \
     ro.vendor.audio.sdk.fluencetype=fluence \
@@ -61,6 +63,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Audio Feature
 PRODUCT_PROPERTY_OVERRIDES += \
+    vendor.audio.feature.a2dp_offload.enable=false \
     vendor.audio.feature.afe_proxy.enable=true \
     vendor.audio.feature.anc_headset.enable=true \
     vendor.audio.feature.audiozoom.enable=false \
@@ -112,19 +115,15 @@ endif
 
 # Bluetooth
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.vendor.bt.aac_frm_ctl.enabled=true \
+    persist.bluetooth.a2dp_offload.disabled=false \
     persist.bluetooth.bluetooth_audio_hal.disabled=false \
+    persist.vendor.bt.a2dp_offload_cap=sbc-aac-aptx-aptxhd-ldac \
+    persist.vendor.bt.aac_frm_ctl.enabled=true \
+    persist.vendor.qcom.bluetooth.enable.splita2dp=false \
     ro.vendor.bluetooth.wipower=false \
     vendor.qcom.bluetooth.soc=cherokee
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.vendor.bt.a2dp.aac_whitelist=false \
-    persist.vendor.qcom.bluetooth.enable.splita2dp=true \
-    persist.vendor.qcom.bluetooth.a2dp_offload_cap=sbc-aptx-aptxhd-aac-ldac \
-    persist.bluetooth.a2dp_offload.disabled=true \
-    ro.bluetooth.library_name=libbluetooth_qti.so \
-    ro.bluetooth.a2dp_offload.supported=true \
-    vendor.audio.feature.a2dp_offload.enable=true \
     vendor.bluetooth.soc=cherokee
 
 # Camera
@@ -136,7 +135,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.camera.exif.make=Xiaomi \
     persist.vendor.camera.privapp.list=org.codeaurora.snapcam \
     vendor.camera.aux.packageblacklist=com.discord \
-    vendor.camera.aux.packagelist=com.google.android.GoogleCamera,org.codeaurora.snapcam,com.android.camera
+    camera.aux.packagelist=com.google.android.GoogleCamera,com.android.camera,org.codeaurora.snapcam \
+    vendor.camera.aux.packagelist=com.google.android.GoogleCamera,com.android.camera,org.codeaurora.snapcam
+
+# Charger
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.charger.disable_init_blank=true \
+    ro.charger.enable_suspend=true
 
 # Codec2 switch
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -152,13 +157,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.early_gl_phase_offset_ns=3000000 \
     debug.sf.early_gl_app_phase_offset_ns=15000000 \
     debug.sf.early_phase_offset_ns=1500000 \
-    debug.sf.enable_gl_backpressure=1 \
     debug.cpurend.vsync=false \
     debug.hwui.use_buffer_age=false \
     persist.debug.wfd.enable=1 \
     persist.hwc.enable_vds=1 \
     ro.opengles.version=196610 \
     ro.qualcomm.cabl=0 \
+    ro.sf.blurs_are_expensive=1 \
+    ro.surface_flinger.supports_background_blur=1 \
     vendor.display.disable_skip_validate=1 \
     vendor.gralloc.enable_fb_ubwc=1 \
     vendor.video.disable.ubwc=1 \
@@ -184,8 +190,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # HAL1 apps list
 PRODUCT_PROPERTY_OVERRIDES += \
-    camera.hal1.packagelist=com.whatsapp,com.android.camera,com.android.camera2,com.instagram.android \
-    vendor.camera.hal1.packagelist= com.whatsapp,com.android.camera,com.android.camera2,com.instagram.android
+    camera.hal1.packagelist=com.android.camera,com.android.camera2,com.instagram.android \
+    vendor.camera.hal1.packagelist= com.android.camera,com.android.camera2,com.instagram.android
 
 # iwlan vowifi corresponding
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -244,19 +250,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.oem_unlock_supported=1
 
-# Perf
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.extension_library=libqti-perfd-client.so \
-    ro.vendor.qti.sys.fw.bg_apps_limit=60 \
-    ro.vendor.at_library=libqti-at.so \
-    vendor.enable.prefetch=0 \
-    vendor.iop.enable_iop=1 \
-    vendor.iop.enable_uxe=1 \
-    vendor.iop.enable_prefetch_ofr=0 \
-    vendor.perf.gestureflingboost.enable=true \
-    vendor.perf.iop_v3.enable=true \
-    vendor.perf.iop_v3.enable.debug=false
-
 # Proximity
 PRODUCT_PROPERTY_OVERRIDES += \
     gsm.proximity.enable=true
@@ -267,7 +260,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.cne.feature=1 \
     persist.vendor.dpm.feature=1 \
     persist.vendor.dpm.nsrm.bkg.evt=3955 \
-    persist.vendor.qcomsysd.enabled=1
+    persist.vendor.qcomsysd.enabled=1 \
+    ro.vendor.extension_library=libqti-perfd-client.so
 
 # QTI
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
@@ -299,7 +293,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     DEVICE_PROVISIONED=1 \
-    persist.sys.fflag.override.settings_network_and_internet_v2=true \
     ril.subscription.types=NV,RUIM \
     telephony.lteOnCdmaDevice=1
 
@@ -327,9 +320,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.surface_flinger.force_hwc_copy_for_virtual_displays=true \
     ro.surface_flinger.max_frame_buffer_acquired_buffers=3 \
     ro.surface_flinger.max_virtual_display_dimension=4096 \
-    ro.surface_flinger.protected_contents=true \
-    ro.surface_flinger.vsync_event_phase_offset_ns=2000000 \
-    ro.surface_flinger.vsync_sf_event_phase_offset_ns=6000000
+    ro.surface_flinger.protected_contents=true
 
 #Storaged
  PRODUCT_PROPERTY_OVERRIDES += \
